@@ -5,47 +5,11 @@
 
 # ## Step 1: Get started with SQL
 
-# Like most businesses, Janet keeps her data in a SQL database.  Normally, you'd download the data from her database to a csv file, and then load it into a Jupyter Notebook using Pandas.
-# 
-# For this project, you'll have to access SQL in a slightly different way.  You'll be using a special Codecademy library that lets you type SQL queries directly into this Jupyter notebook.  You'll have pass each SQL query as an argument to a function called `sql_query`.  Each query will return a Pandas DataFrame.  Here's an example:
 
 # In[28]:
 
 # This import only needs to happen once, at the beginning of the notebook
 from codecademySQL import sql_query
-
-
-# In[29]:
-
-# Here's an example of a query that just displays some data
-sql_query('''
-SELECT *
-FROM visits
-LIMIT 5
-''')
-
-
-# In[30]:
-
-# Here's an example where we save the data to a DataFrame
-dataframe = sql_query('''
-SELECT *
-FROM applications
-LIMIT 5
-''')
-
-
-# ## Step 2: Get your dataset
-
-# Let's get started!
-# 
-# Janet of MuscleHub has a SQLite database, which contains several tables that will be helpful to you in this investigation:
-# - `visits` contains information about potential gym customers who have visited MuscleHub
-# - `fitness_tests` contains information about potential customers in "Group A", who were given a fitness test
-# - `applications` contains information about any potential customers (both "Group A" and "Group B") who filled out an application.  Not everyone in `visits` will have filled out an application.
-# - `purchases` contains information about customers who purchased a membership to MuscleHub.
-# 
-# Use the space below to examine each table.
 
 # In[31]:
 
@@ -82,27 +46,6 @@ select*
 from purchases
 limit 5''')
 
-
-# We'd like to download a giant DataFrame containing all of this data.  You'll need to write a query that does the following things:
-# 
-# 1. Not all visits in  `visits` occurred during the A/B test.  You'll only want to pull data where `visit_date` is on or after `7-1-17`.
-# 
-# 2. You'll want to perform a series of `LEFT JOIN` commands to combine the four tables that we care about.  You'll need to perform the joins on `first_name`, `last_name`, and `email`.  Pull the following columns:
-# 
-# 
-# - `visits.first_name`
-# - `visits.last_name`
-# - `visits.gender`
-# - `visits.email`
-# - `visits.visit_date`
-# - `fitness_tests.fitness_test_date`
-# - `applications.application_date`
-# - `purchases.purchase_date`
-# 
-# Save the result of this query to a variable called `df`.
-# 
-# Hint: your result should have 5004 rows.  Does it?
-
 # In[35]:
 
 #SQL code for MuscleHub
@@ -137,7 +80,6 @@ df[0:5]
 
 # ## Step 3: Investigate the A and B groups
 
-# We have some data to work with! Import the following modules so that we can start doing analysis:
 # - `import pandas as pd`
 # - `from matplotlib import pyplot as plt`
 
@@ -147,9 +89,9 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 
-# We're going to add some columns to `df` to help us with our analysis.
+# add some columns to `df` to help us with analysis.
 # 
-# Start by adding a column called `ab_test_group`.  It should be `A` if `fitness_test_date` is not `None`, and `B` if `fitness_test_date` is `None`.
+# add a column called `ab_test_group`.  It should be `A` if `fitness_test_date` is not `None`, and `B` if `fitness_test_date` is `None`.
 
 # In[37]:
 
@@ -158,17 +100,12 @@ df["ab_test_group"] = df.fitness_test_date.apply(lambda x: "A"                  
 df[0:5]
 
 
-# Let's do a quick sanity check that Janet split her visitors such that about half are in A and half are in B.
-# 
-# Start by using `groupby` to count how many users are in each `ab_test_group`.  Save the results to `ab_counts`.
-
 # In[38]:
 
 #A/B grouping 
 ab_counts = df.groupby('ab_test_group').first_name.count().reset_index()
 
 
-# We'll want to include this information in our presentation.  Let's create a pie cart using `plt.pie`.  Make sure to include:
 # - Use `plt.axis('equal')` so that your pie chart looks nice
 # - Add a legend labeling `A` and `B`
 # - Use `autopct` to label the percentage of each group
@@ -185,14 +122,11 @@ plt.savefig('ab_test_pie_chart.png')
 
 # ## Step 4: Who picks up an application?
 
-# Recall that the sign-up process for MuscleHub has several steps:
+# sign-up process for MuscleHub has several steps:
 # 1. Take a fitness test with a personal trainer (only Group A)
 # 2. Fill out an application for the gym
 # 3. Send in their payment for their first month's membership
 # 
-# Let's examine how many people make it to Step 2, filling out an application.
-# 
-# Start by creating a new column in `df` called `is_application` which is `Application` if `application_date` is not `None` and `No Application`, otherwise.
 
 # In[40]:
 
